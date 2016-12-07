@@ -3,6 +3,7 @@ package org.qinyu.nestedwebview;
 import android.content.Context;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import org.qinyu.nestedwebview.log.LogUtils;
@@ -12,6 +13,7 @@ import static org.qinyu.nestedwebview.log.LogUtils.TAG;
 
 public class NestedWebViewContainer extends NestedScrollView {
     private View nestedScrollChild;
+    private boolean preScrolled;
 
     public NestedWebViewContainer(Context context) {
         super(context);
@@ -28,20 +30,23 @@ public class NestedWebViewContainer extends NestedScrollView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        nestedScrollChild = findViewById(R.id.nested_web);
+        nestedScrollChild = findViewById(org.qinyu.nestedwebview.R.id.nested_web);
     }
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        preScrolled = false;
         if (shouldPreScroll() && canScrollVertically(dy)) {
-            int consumeY = 0;
+            int consumedY;
             int oldScrollY = getScrollY();
             preScrollBy(0, dy);
-            consumeY = getScrollY() - oldScrollY;
+            consumedY = getScrollY() - oldScrollY;
             if (consumed != null && consumed.length > 1) {
-                consumed[1] = consumeY;
+                consumed[1] = consumedY;
             }
-            int unconsumedY = dy - consumeY;
+            LogUtils.d(TAG, "onNestedPreScroll:" + consumedY);
+            preScrolled = true;
+            int unconsumedY = dy - consumedY;
             int[] parentConsumed = new int[2];
             if (dispatchNestedPreScroll(dx, unconsumedY, parentConsumed, null)) {
                 if (consumed != null && consumed.length > 1) {
@@ -56,18 +61,20 @@ public class NestedWebViewContainer extends NestedScrollView {
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (canScrollVertically(dyUnconsumed)) {
+        if (!preScrolled && canScrollVertically(dyUnconsumed)) {
             final int oldScrollY = getScrollY();
             scrollBy(0, dyUnconsumed);
 
             final int myConsumed = getScrollY() - oldScrollY;
+            LogUtils.d(TAG, "onNestedScroll:" + myConsumed);
             final int myUnconsumed = dyUnconsumed - myConsumed;
             dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null);
-            LogUtils.d(TAG, "onNestedScroll:myConsumed:" + myConsumed);
-            LogUtils.d(TAG, "onNestedScroll:myUnconsumed:" + myUnconsumed);
+//            LogUtils.d(TAG, "onNestedScroll:myConsumed:" + myConsumed);
+//            LogUtils.d(TAG, "onNestedScroll:myUnconsumed:" + myUnconsumed);
         } else {
             dispatchNestedScroll(0, 0, 0, dyUnconsumed, null);
         }
+
     }
 
     private void preScrollBy(int x, int y) {
@@ -75,32 +82,33 @@ public class NestedWebViewContainer extends NestedScrollView {
             return;
         }
 
+
+
         int oldScrollY = getScrollY();
         int top = getRelativeTop(nestedScrollChild);
         int bottom = getRelativeBottom(nestedScrollChild);
         int height = getHeight();
 
         int tryScrollY = oldScrollY + y;
-        if (y > 0 && tryScrollY >= top) {
+        Log.d(TAG, "preScrollBy:" + y +
+                ",tryScrollY:" + tryScrollY + ",oldScrollY:" + oldScrollY + ",top:" + top + ",bottom:" + bottom + ",height:" + height);
+        if (y > 0 && tryScrollY >= top && oldScrollY < top) {
             tryScrollY = top;
-        } else {
-            if (y < 0 && bottom >= tryScrollY + height) {
-                tryScrollY = bottom - height;
-            }
+        } else if (y < 0 && bottom >= tryScrollY + height && bottom < oldScrollY + height) {
+            tryScrollY = bottom - height;
         }
-
         super.scrollBy(x, tryScrollY - oldScrollY);
     }
 
 
-    public boolean shouldPreScroll() {
+    private boolean shouldPreScroll() {
         int top = getRelativeTop(nestedScrollChild);
         int bottom = getRelativeBottom(nestedScrollChild);
         int scrollY = getScrollY();
 
         int height = getHeight();
         boolean result = scrollY < top || bottom < scrollY + height;
-        LogUtils.d(TAG, "shouldPreScroll:" + result +
+        Log.d(TAG, "shouldPreScroll:" + result +
                 ",top:" + top + ",bottom:" + bottom + ",scrollY:" + scrollY + ",height:" + height);
         return result;
     }
