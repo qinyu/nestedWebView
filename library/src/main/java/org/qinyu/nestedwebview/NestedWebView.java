@@ -6,13 +6,8 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.webkit.WebView;
-
-import org.qinyu.nestedwebview.log.LogUtils;
-
-import static org.qinyu.nestedwebview.log.LogUtils.TAG;
 
 
 public class NestedWebView extends WebView implements NestedScrollingChild {
@@ -55,16 +50,16 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
             case MotionEvent.ACTION_MOVE:
                 // NestedPreScroll
                 int deltaY = lastY - eventY;
-                Log.d(TAG, "onTouchEvent:beforeDispatchNestedPreScroll:lastY" + lastY +
-                        ",eventY:" + event.getY() + ",deltaY:" + deltaY + ",nestedOffsetY:" + nestedOffsetY);
+//                LogUtils.d(TAG, "onTouchEvent:beforeDispatchNestedPreScroll:lastY" + lastY +
+//                        ",eventY:" + event.getY() + ",deltaY:" + deltaY + ",nestedOffsetY:" + nestedOffsetY);
 
                 if (dispatchNestedPreScroll(0, deltaY, scrollConsumed, scrollOffset)) {
                     deltaY -= scrollConsumed[1];
                     lastY = eventY - scrollOffset[1];
                     event.offsetLocation(0, scrollOffset[1]);
                     nestedOffsetY += scrollOffset[1];
-                    Log.d(TAG, "onTouchEvent:afterDispatchNestedPreScroll:lastY" + lastY +
-                            ",eventY:" + event.getY() + ",deltaY:" + deltaY + ",nestedOffsetY:" + nestedOffsetY);
+//                    LogUtils.d(TAG, "onTouchEvent:afterDispatchNestedPreScroll:lastY" + lastY +
+//                            ",eventY:" + event.getY() + ",deltaY:" + deltaY + ",nestedOffsetY:" + nestedOffsetY);
                 }
 
                 returnValue = consumeEvent(event, deltaY);
@@ -102,10 +97,10 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         final int dyConsumed = tryScrollToY - oldScrollY;
         final int dyUnconsumed = deltaY - dyConsumed;
 
-        LogUtils.d(TAG, "dispatchNestedScroll:deltaY:" + deltaY);
-        LogUtils.d(TAG, "dispatchNestedScroll:dyConsumed:" + deltaY);
-        LogUtils.d(TAG, "dispatchNestedScroll:scrollConsumed:[" + scrollConsumed[0] + ", " + scrollConsumed[1] + "]");
-        LogUtils.d(TAG, "dispatchNestedScroll:scrollOffset:[" + scrollOffset[0] + ", " + scrollOffset[1] + "]");
+//        LogUtils.d(TAG, "dispatchNestedScroll:deltaY:" + deltaY);
+//        LogUtils.d(TAG, "dispatchNestedScroll:dyConsumed:" + deltaY);
+//        LogUtils.d(TAG, "dispatchNestedScroll:scrollConsumed:[" + scrollConsumed[0] + ", " + scrollConsumed[1] + "]");
+//        LogUtils.d(TAG, "dispatchNestedScroll:scrollOffset:[" + scrollOffset[0] + ", " + scrollOffset[1] + "]");
         // NestedScroll
         if (dispatchNestedScroll(0, dyConsumed, 0, dyUnconsumed, scrollOffset)) {
             event.offsetLocation(0, scrollOffset[1]);
@@ -161,14 +156,5 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
         return scrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
-    }
-
-
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        super.onScrollChanged(l, t, oldl, oldt);
-        Log.d(TAG, "onScrollChanged:t" + t +
-                ",oldt:" + oldt);
-
     }
 }

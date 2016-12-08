@@ -1,19 +1,19 @@
 package org.qinyu.nestedwebview;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.webkit.WebView;
 
-import org.qinyu.nestedwebview.log.LogUtils;
 
-import static org.qinyu.nestedwebview.log.LogUtils.TAG;
-
-
-public class NestedWebViewContainer extends NestedScrollView {
-    private View nestedScrollChild;
+public class NestedWebViewContainer extends NestedScrollView implements ViewTreeObserver.OnGlobalLayoutListener {
+    private WebView nestedScrollChild;
     private boolean preScrolled;
+    private boolean relayout;
 
     public NestedWebViewContainer(Context context) {
         super(context);
@@ -30,7 +30,7 @@ public class NestedWebViewContainer extends NestedScrollView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        nestedScrollChild = findViewById(org.qinyu.nestedwebview.R.id.nested_web);
+        nestedScrollChild = (WebView) findViewById(org.qinyu.nestedwebview.R.id.nested_web);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class NestedWebViewContainer extends NestedScrollView {
             if (consumed != null && consumed.length > 1) {
                 consumed[1] = consumedY;
             }
-            LogUtils.d(TAG, "onNestedPreScroll:" + consumedY);
+//            LogUtils.d(TAG, "onNestedPreScroll:" + consumedY);
             preScrolled = true;
             int unconsumedY = dy - consumedY;
             int[] parentConsumed = new int[2];
@@ -66,7 +66,7 @@ public class NestedWebViewContainer extends NestedScrollView {
             scrollBy(0, dyUnconsumed);
 
             final int myConsumed = getScrollY() - oldScrollY;
-            LogUtils.d(TAG, "onNestedScroll:" + myConsumed);
+//            LogUtils.d(TAG, "onNestedScroll:" + myConsumed);
             final int myUnconsumed = dyUnconsumed - myConsumed;
             dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null);
 //            LogUtils.d(TAG, "onNestedScroll:myConsumed:" + myConsumed);
@@ -82,16 +82,14 @@ public class NestedWebViewContainer extends NestedScrollView {
             return;
         }
 
-
-
         int oldScrollY = getScrollY();
         int top = getRelativeTop(nestedScrollChild);
         int bottom = getRelativeBottom(nestedScrollChild);
         int height = getHeight();
 
         int tryScrollY = oldScrollY + y;
-        Log.d(TAG, "preScrollBy:" + y +
-                ",tryScrollY:" + tryScrollY + ",oldScrollY:" + oldScrollY + ",top:" + top + ",bottom:" + bottom + ",height:" + height);
+//        LogUtils.d(TAG, "preScrollBy:" + y +
+//                ",tryScrollY:" + tryScrollY + ",oldScrollY:" + oldScrollY + ",top:" + top + ",bottom:" + bottom + ",height:" + height);
         if (y > 0 && tryScrollY >= top && oldScrollY < top) {
             tryScrollY = top;
         } else if (y < 0 && bottom >= tryScrollY + height && bottom < oldScrollY + height) {
@@ -107,9 +105,9 @@ public class NestedWebViewContainer extends NestedScrollView {
         int scrollY = getScrollY();
 
         int height = getHeight();
-        boolean result = (scrollY < top) || ( bottom < scrollY + height);
-        Log.d(TAG, "shouldPreScroll:" + result +
-                ",top:" + top + ",bottom:" + bottom + ",scrollY:" + scrollY + ",height:" + height);
+        boolean result = (scrollY < top) || (bottom < scrollY + height);
+//        LogUtils.d(TAG, "shouldPreScroll:" + result +
+//                ",top:" + top + ",bottom:" + bottom + ",scrollY:" + scrollY + ",height:" + height);
         return result || !nestedScrollChild.canScrollVertically(dy);
     }
 
@@ -126,6 +124,31 @@ public class NestedWebViewContainer extends NestedScrollView {
             return childView.getBottom();
         } else {
             return childView.getBottom() + getRelativeTop((View) childView.getParent());
+        }
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
+        relayout = false;
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !relayout) {
+            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        }
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        if (!relayout) {
+            ViewGroup.LayoutParams params = nestedScrollChild.getLayoutParams();
+            params.height = getHeight();
+            nestedScrollChild.setLayoutParams(params);
+            relayout = true;
         }
     }
 

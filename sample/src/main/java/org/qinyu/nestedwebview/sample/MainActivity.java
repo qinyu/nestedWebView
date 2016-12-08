@@ -12,9 +12,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int index;
     private final static String[] URLS = {
-            "file:///android_asset/index.html",
-            "file:///android_asset/origin_index.html",
-            "file:///android_asset/test_mail.html",
+            "http://www.baidu.com",
             "http://nba.hupu.com"
     };
 
