@@ -1,19 +1,28 @@
 package org.qinyu.nestedwebview.sample;
 
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private WebView viewById;
+
+    private int index;
+    private final static String[] URLS = {
+            "file:///android_asset/index.html",
+            "file:///android_asset/origin_index.html",
+            "file:///android_asset/test_mail.html",
+            "http://nba.hupu.com"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(org.qinyu.nestedwebview.sample.R.layout.activity_main);
-        WebView viewById = (WebView) findViewById(org.qinyu.nestedwebview.R.id.nested_web);
+        viewById = (WebView) findViewById(org.qinyu.nestedwebview.R.id.nested_web);
         WebSettings settings = viewById.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
@@ -33,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         settings.setAllowFileAccess(true);
         settings.setSaveFormData(true);
 
-        viewById.loadUrl("http://nba.hupu.com");
+        loadNextUrl();
     }
 
     public void switchHeader(View view) {
@@ -53,5 +62,15 @@ public class MainActivity extends AppCompatActivity {
         } else if (viewById.getVisibility() == View.VISIBLE) {
             viewById.setVisibility(View.GONE);
         }
+    }
+
+    public void switchHtml(View view) {
+        loadNextUrl();
+    }
+
+    private void loadNextUrl() {
+        String url = URLS[(index++) % URLS.length];
+        viewById.loadUrl(url);
+        setTitle(url);
     }
 }
