@@ -24,23 +24,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(org.qinyu.nestedwebview.sample.R.layout.activity_main);
         viewById = (WebView) findViewById(org.qinyu.nestedwebview.R.id.nested_web);
         WebSettings settings = viewById.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+//        settings.setJavaScriptEnabled(true);
+//        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         settings.setSupportZoom(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+//        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+//        settings.setBuiltInZoomControls(true);
+//        settings.setDisplayZoomControls(false);
+//
+//        settings.setAppCacheEnabled(true);
+//        settings.setAppCachePath(getCacheDir().getAbsolutePath());
+//        settings.setDatabaseEnabled(true);
+//        settings.setSupportMultipleWindows(true);
+        settings.setLoadWithOverviewMode(true);
+//        settings.setUseWideViewPort(true);
+//        settings.setDomStorageEnabled(true);
+//        settings.setAllowContentAccess(true);
+//        settings.setAllowFileAccess(true);
+//        settings.setSaveFormData(true);
+
+        settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-
-        settings.setAppCacheEnabled(true);
-        settings.setAppCachePath(getCacheDir().getAbsolutePath());
-        settings.setDatabaseEnabled(true);
-        settings.setSupportMultipleWindows(true);
-        settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
-        settings.setDomStorageEnabled(true);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        settings.setSaveFormData(true);
+        viewById.setInitialScale(1);
 
         loadNextUrl();
     }
