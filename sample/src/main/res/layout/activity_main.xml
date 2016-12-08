@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.qinyu.nestedwebview.NestedWebViewContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -7,45 +7,75 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <org.qinyu.nestedwebview.NestedWebViewContainer
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/header1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Hello World!\nThis is Header1"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/header2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Hello World!\nThis is Header2"
+                android:textSize="40sp" />
+
+            <org.qinyu.nestedwebview.NestedWebView
+                android:id="@id/nested_web"
+                android:layout_width="match_parent"
+                android:layout_height="700dp" />
+
+            <TextView
+                android:id="@+id/footer1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Hello World!\nThis is Footer1"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/footer2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Hello World!\nThis is Footer2"
+                android:textSize="40sp" />
+
+        </LinearLayout>
+
+    </org.qinyu.nestedwebview.NestedWebViewContainer>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Hello World!\nThis is Header1"
-            android:textSize="40sp" />
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:onClick="switchHeader"
+            android:text="Switch Header2" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Hello World!\nThis is Header2"
-            android:textSize="40sp" />
-
-        <org.qinyu.nestedwebview.NestedWebView
-            android:id="@id/nested_web"
-            android:layout_width="match_parent"
-            android:layout_height="700dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Hello World!\nThis is Footer1"
-            android:textSize="40sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Hello World!\nThis is Footer2"
-            android:textSize="40sp" />
-
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:onClick="switchFooter"
+            android:text="Switch Footer1" />
     </LinearLayout>
-
-
-</org.qinyu.nestedwebview.NestedWebViewContainer>
+</FrameLayout>

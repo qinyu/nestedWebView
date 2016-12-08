@@ -1,7 +1,9 @@
 package org.qinyu.nestedwebview.sample;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -32,5 +34,24 @@ public class MainActivity extends AppCompatActivity {
         settings.setSaveFormData(true);
 
         viewById.loadUrl("http://nba.hupu.com");
+    }
+
+    public void switchHeader(View view) {
+        View viewById = findViewById(R.id.header2);
+        if (viewById.getVisibility() == View.GONE) {
+            viewById.setVisibility(View.VISIBLE);
+        } else if (viewById.getVisibility() == View.VISIBLE) {
+            viewById.setVisibility(View.GONE);
+        }
+    }
+
+
+    public void switchFooter(View view) {
+        View viewById = findViewById(R.id.footer1);
+        if (viewById.getVisibility() == View.GONE) {
+            viewById.setVisibility(View.VISIBLE);
+        } else if (viewById.getVisibility() == View.VISIBLE) {
+            viewById.setVisibility(View.GONE);
+        }
     }
 }
