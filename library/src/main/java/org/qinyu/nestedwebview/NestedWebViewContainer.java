@@ -36,7 +36,7 @@ public class NestedWebViewContainer extends NestedScrollView {
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         preScrolled = false;
-        if (shouldPreScroll() && canScrollVertically(dy)) {
+        if (shouldPreScroll(dy) && canScrollVertically(dy)) {
             int consumedY;
             int oldScrollY = getScrollY();
             preScrollBy(0, dy);
@@ -101,16 +101,16 @@ public class NestedWebViewContainer extends NestedScrollView {
     }
 
 
-    private boolean shouldPreScroll() {
+    private boolean shouldPreScroll(int dy) {
         int top = getRelativeTop(nestedScrollChild);
         int bottom = getRelativeBottom(nestedScrollChild);
         int scrollY = getScrollY();
 
         int height = getHeight();
-        boolean result = scrollY < top || bottom < scrollY + height;
+        boolean result = (scrollY < top) || ( bottom < scrollY + height);
         Log.d(TAG, "shouldPreScroll:" + result +
                 ",top:" + top + ",bottom:" + bottom + ",scrollY:" + scrollY + ",height:" + height);
-        return result;
+        return result || !nestedScrollChild.canScrollVertically(dy);
     }
 
     private int getRelativeTop(View childView) {
@@ -128,4 +128,5 @@ public class NestedWebViewContainer extends NestedScrollView {
             return childView.getBottom() + getRelativeTop((View) childView.getParent());
         }
     }
+
 }
